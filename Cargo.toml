@@ -1,0 +1,15 @@
+[package]
+name = "bitcoind-tests"
+version = "0.1.0"
+authors = ["sanket1729 <sanket1729@gmail.com>"]
+edition = "2018"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+miniscript = {path = "../"}
+bitcoind = { version = "0.34.0" }
+actual-rand = { package = "rand", version = "0.8.4"}
+secp256k1 = {version = "0.28.0", features = ["rand-std"]}
+internals = { package = "bitcoin-internals", version = "0.2.0", default_features = false }
