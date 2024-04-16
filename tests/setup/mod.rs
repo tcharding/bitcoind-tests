@@ -1,5 +1,3 @@
-extern crate miniscript;
-
 use bitcoind::bitcoincore_rpc::RpcApi;
 use bitcoind::BitcoinD;
 
