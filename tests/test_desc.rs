@@ -26,11 +26,6 @@ mod setup;
 
 use setup::test_util::{self, TestData};
 
-/// Quickly create a BTC amount.
-fn btc<F: Into<f64>>(btc: F) -> Amount {
-    Amount::from_btc(btc.into()).unwrap()
-}
-
 // Find the Outpoint by spk
 fn get_vout(cl: &Client, txid: Txid, value: Amount, spk: ScriptBuf) -> (OutPoint, TxOut) {
     let tx = cl
@@ -95,7 +90,7 @@ pub fn test_desc_satisfy(
 
     // Next send some btc to each address corresponding to the miniscript
     let txid = cl
-        .send_to_address(&desc_address, btc(1), None, None, None, None, None, None)
+        .send_to_address(&desc_address, Amount::ONE_BTC, None, None, None, None, None, None)
         .unwrap();
     // Wait for the funds to mature.
     let blocks = cl
@@ -121,7 +116,7 @@ pub fn test_desc_satisfy(
         outputs: vec![],
     };
     // figure out the outpoint from the txid
-    let (outpoint, witness_utxo) = get_vout(&cl, txid, btc(1.0), derived_desc.script_pubkey());
+    let (outpoint, witness_utxo) = get_vout(&cl, txid, Amount::ONE_BTC, derived_desc.script_pubkey());
     let mut txin = TxIn::default();
     txin.previous_output = outpoint;
     // set the sequence to a non-final number for the locktime transactions to be
