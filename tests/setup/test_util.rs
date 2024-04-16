@@ -21,9 +21,9 @@ use std::str::FromStr;
 
 use bitcoin::hashes::{hash160, ripemd160, sha256, Hash};
 use bitcoin::hex::DisplayHex;
-use bitcoin::key::XOnlyPublicKey;
-use bitcoin::secp256k1;
+use bitcoin::key::{Keypair, XOnlyPublicKey};
 use bitcoin::secp256k1::rand::{self, RngCore};
+use bitcoin::secp256k1::{self, Secp256k1};
 
 use miniscript::descriptor::{SinglePub, SinglePubKey};
 use miniscript::{
@@ -43,8 +43,8 @@ pub struct PubData {
 
 #[derive(Debug, Clone)]
 pub struct SecretData {
-    pub sks: Vec<bitcoin::secp256k1::SecretKey>,
-    pub x_only_keypairs: Vec<bitcoin::secp256k1::Keypair>,
+    pub sks: Vec<secp256k1::SecretKey>,
+    pub x_only_keypairs: Vec<Keypair>,
     pub sha256_pre: [u8; 32],
     pub hash256_pre: [u8; 32],
     pub ripemd160_pre: [u8; 32],
@@ -60,12 +60,12 @@ pub struct TestData {
 fn setup_keys(
     n: usize,
 ) -> (
-    Vec<bitcoin::secp256k1::SecretKey>,
-    Vec<miniscript::bitcoin::PublicKey>,
-    Vec<bitcoin::secp256k1::Keypair>,
+    Vec<secp256k1::SecretKey>,
+    Vec<bitcoin::PublicKey>,
+    Vec<Keypair>,
     Vec<XOnlyPublicKey>,
 ) {
-    let secp_sign = secp256k1::Secp256k1::signing_only();
+    let secp_sign = Secp256k1::signing_only();
     let mut sk = [0; 32];
     let mut sks = vec![];
     let mut pks = vec![];
@@ -75,7 +75,7 @@ fn setup_keys(
         sk[2] = (i >> 16) as u8;
 
         let sk = secp256k1::SecretKey::from_slice(&sk[..]).expect("secret key");
-        let pk = miniscript::bitcoin::PublicKey {
+        let pk = bitcoin::PublicKey {
             inner: secp256k1::PublicKey::from_secret_key(&secp_sign, &sk),
             compressed: true,
         };
@@ -87,7 +87,7 @@ fn setup_keys(
     let mut x_only_pks = vec![];
 
     for i in 0..n {
-        let keypair = bitcoin::secp256k1::Keypair::from_secret_key(&secp_sign, &sks[i]);
+        let keypair = Keypair::from_secret_key(&secp_sign, &sks[i]);
         let (xpk, _parity) = XOnlyPublicKey::from_keypair(&keypair);
         x_only_keypairs.push(keypair);
         x_only_pks.push(xpk);
