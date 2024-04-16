@@ -1,0 +1,2 @@
+# gitignore for bitcoind-tests
+Cargo.lock
