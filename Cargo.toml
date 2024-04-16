@@ -12,6 +12,5 @@ rust-version = "1.56.1"
 [dependencies]
 miniscript = {version = "11.0.0", features = ["std"]}
 bitcoind = { version = "0.35.1" }
-actual-rand = { package = "rand", version = "0.8.4"}
-secp256k1 = {version = "0.28.0", features = ["rand-std"]}
+bitcoin = { version = "0.31.2", features = ["rand-std"] }
 internals = { package = "bitcoin-internals", version = "0.2.0", default_features = false }

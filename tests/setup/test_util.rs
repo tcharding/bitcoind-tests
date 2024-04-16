@@ -19,9 +19,8 @@
 
 use std::str::FromStr;
 
-use actual_rand as rand;
 use bitcoin::hashes::{hash160, ripemd160, sha256, Hash};
-use bitcoin::secp256k1;
+use bitcoin::secp256k1::{self, rand};
 use internals::hex::exts::DisplayHex;
 use miniscript::descriptor::{SinglePub, SinglePubKey};
 use miniscript::{
