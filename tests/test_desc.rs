@@ -7,24 +7,25 @@
 use std::collections::BTreeMap;
 use std::{error, fmt};
 
-use bitcoin::blockdata::witness::Witness;
 use bitcoin::hashes::{sha256d, Hash};
-use bitcoin::psbt::Psbt;
-use bitcoin::secp256k1::rand;
+use bitcoin::secp256k1::rand::{self, RngCore};
+
 use bitcoin::sighash::SighashCache;
 use bitcoin::taproot::{LeafVersion, TapLeafHash};
 use bitcoin::{
-    absolute, psbt, secp256k1, sighash, transaction, Amount, OutPoint, Sequence, Transaction, TxIn,
-    TxOut, Txid,
+    absolute, ecdsa, psbt, secp256k1, sighash, taproot, transaction, Amount, OutPoint, Psbt,
+    ScriptBuf, Sequence, Transaction, TxIn, TxOut, Txid, Witness,
 };
+
 use bitcoind::bitcoincore_rpc::{json, Client, RpcApi};
-use miniscript::bitcoin::{self, ecdsa, taproot, ScriptBuf};
+
 use miniscript::psbt::{PsbtExt, PsbtInputExt};
 use miniscript::{Descriptor, Miniscript, ScriptContext, ToPublicKey};
+
 mod setup;
 
-use rand::RngCore;
 use setup::test_util::{self, TestData};
+
 /// Quickly create a BTC amount.
 fn btc<F: Into<f64>>(btc: F) -> Amount {
     Amount::from_btc(btc.into()).unwrap()

@@ -10,16 +10,18 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 use bitcoin::hashes::{sha256d, Hash};
-use bitcoin::psbt::Psbt;
 use bitcoin::{
-    psbt, secp256k1, transaction, Amount, OutPoint, Sequence, Transaction, TxIn, TxOut, Txid,
+    absolute, psbt, secp256k1, transaction, Amount, OutPoint, Psbt, Sequence, Transaction, TxIn,
+    TxOut, Txid,
 };
+
 use bitcoind::bitcoincore_rpc::{json, Client, RpcApi};
-use miniscript::bitcoin::absolute;
+
 use miniscript::psbt::PsbtExt;
 use miniscript::{bitcoin, DefiniteDescriptorKey, Descriptor};
 
 mod setup;
+
 use setup::test_util::{self, PubData, TestData};
 
 // parse ~30 miniscripts from file

@@ -20,15 +20,16 @@
 use std::str::FromStr;
 
 use bitcoin::hashes::{hash160, ripemd160, sha256, Hash};
-use bitcoin::secp256k1::{self, rand};
-use internals::hex::exts::DisplayHex;
+use bitcoin::hex::DisplayHex;
+use bitcoin::key::XOnlyPublicKey;
+use bitcoin::secp256k1;
+use bitcoin::secp256k1::rand::{self, RngCore};
+
 use miniscript::descriptor::{SinglePub, SinglePubKey};
 use miniscript::{
-    bitcoin, hash256, Descriptor, DescriptorPublicKey, Error, Miniscript, ScriptContext,
-    TranslatePk, Translator,
+    hash256, Descriptor, DescriptorPublicKey, Error, Miniscript, ScriptContext, TranslatePk,
+    Translator,
 };
-use rand::RngCore;
-use secp256k1::XOnlyPublicKey;
 
 #[derive(Clone, Debug)]
 pub struct PubData {
