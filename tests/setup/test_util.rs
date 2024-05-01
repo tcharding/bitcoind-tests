@@ -57,6 +57,7 @@ pub struct TestData {
 }
 
 // Setup (sk, pk) pairs
+#[allow(dead_code)]
 fn setup_keys(
     n: usize,
 ) -> (
@@ -97,6 +98,7 @@ fn setup_keys(
 
 impl TestData {
     // generate a fixed data for n keys
+    #[allow(dead_code)]
     pub(crate) fn new_fixed_data(n: usize) -> Self {
         let (sks, pks, x_only_keypairs, x_only_pks) = setup_keys(n);
         let sha256_pre = [0x12 as u8; 32];
