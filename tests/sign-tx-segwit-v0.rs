@@ -1,7 +1,7 @@
 use bitcoin::secp256k1::{self, rand, Message, Secp256k1, Signing};
 use bitcoin::sighash::{EcdsaSighashType, SighashCache};
 use bitcoin::{
-    absolute, transaction, Address, Amount, Network, OutPoint, PublicKey, Script, ScriptBuf,
+    absolute, transaction, Address, Amount, CompressedPublicKey, Network, OutPoint, PublicKey, Script, ScriptBuf,
     Sequence, Transaction, TxIn, TxOut, Txid, WPubkeyHash, Witness,
 };
 
@@ -23,6 +23,7 @@ fn test_sign_segwit_v0() {
     // Keys controlled by us, the sender.
     let (sk, wpkh) = senders_keys(&secp);
     let pk = PublicKey::new(sk.public_key(&secp));
+    let pk = CompressedPublicKey::try_from(pk).expect("segwit only has compressed keys");
 
     // An unspent output that is locked to the key of the sender.
     let (out_point, utxo) = unspent_transaction_output(&cl, &pk);
@@ -76,8 +77,8 @@ fn test_sign_segwit_v0() {
 
     // Update the witness stack.
     let signature = bitcoin::ecdsa::Signature {
-        sig: signature,
-        hash_ty: sighash_type,
+        signature,
+        sighash_type,
     };
     let pk = sk.public_key(&secp);
     *sighasher.witness_mut(input_index).unwrap() = Witness::p2wpkh(&signature, &pk);
@@ -100,7 +101,7 @@ fn senders_keys<C: Signing>(secp: &Secp256k1<C>) -> (secp256k1::SecretKey, WPubk
 }
 
 /// Creates a p2wpkh output locked to the key associated with `pk`/`wpkh`.
-fn unspent_transaction_output(cl: &Client, pk: &PublicKey) -> (OutPoint, TxOut) {
+fn unspent_transaction_output(cl: &Client, pk: &CompressedPublicKey) -> (OutPoint, TxOut) {
     let blocks = cl
         .generate_to_address(
             500,
@@ -110,7 +111,7 @@ fn unspent_transaction_output(cl: &Client, pk: &PublicKey) -> (OutPoint, TxOut) 
     assert_eq!(blocks.len(), 500);
 
     // Send some corn to an address associated with `pk` and `wpkh`.
-    let me = Address::p2wpkh(&pk, NETWORK).expect("failed to create address");
+    let me = Address::p2wpkh(pk, NETWORK);
     let spk = me.script_pubkey();
 
     let txid = cl

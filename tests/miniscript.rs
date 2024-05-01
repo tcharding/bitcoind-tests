@@ -178,9 +178,9 @@ pub fn test_from_cpp_ms(cl: &Client, testdata: &TestData) {
         // Get the required sighash message
         let amt = btc(1);
         let mut sighash_cache = bitcoin::sighash::SighashCache::new(&psbts[i].unsigned_tx);
-        let sighash_ty = bitcoin::sighash::EcdsaSighashType::All;
+        let sighash_type = bitcoin::sighash::EcdsaSighashType::All;
         let sighash = sighash_cache
-            .p2wsh_signature_hash(0, &ms.encode(), amt, sighash_ty)
+            .p2wsh_signature_hash(0, &ms.encode(), amt, sighash_type)
             .unwrap();
 
         // requires both signing and verification because we check the tx
@@ -189,13 +189,13 @@ pub fn test_from_cpp_ms(cl: &Client, testdata: &TestData) {
 
         // Finally construct the signature and add to psbt
         for sk in sks_reqd {
-            let sig = secp.sign_ecdsa(&msg, &sk);
+            let signature = secp.sign_ecdsa(&msg, &sk);
             let pk = pks[sks.iter().position(|&x| x == sk).unwrap()];
             psbts[i].inputs[0].partial_sigs.insert(
                 pk,
                 bitcoin::ecdsa::Signature {
-                    sig,
-                    hash_ty: sighash_ty,
+                    signature,
+                    sighash_type,
                 },
             );
         }
